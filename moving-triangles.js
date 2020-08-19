@@ -50,98 +50,59 @@ const main = (function () {
   const canvas = document.getElementById("main-canvas");
   const ctx = canvas.getContext("2d");
 
-  const numCircles = { x: 8, y: 8 };
+  window.onresize = () => {
+    init();
+  };
 
-  const circleSpeedRange = [0.2, 0.4];
-  const circleRadius = 6;
-  //const ballColors = ["#ff0000"];
+  // Constants
   const circleColor = "#B5B0FB66";
-
   const drawEdges = false;
-  const lineColor = "#ff0000";
+  const lineColor = "#B5B0FB66";
   const lineWidth = 1;
-
   const triangleBaseColor = { h: 244, s: 94, l: 68 };
   const triangleColorRangeL = [-10, 5];
-  //const triangleColors = ["#4f49bd", "#6c63fa", "#867ff4"];
 
-  let circles = [];
-  let idCounter = 0;
-
-  let points = [];
-  let delaunay = undefined;
+  // Non-constants
+  let numCircles,
+    circleSpeedRange,
+    circleRadius,
+    circles,
+    idCounter,
+    points,
+    delaunay;
 
   // Setup scene
-  canvasFunctions.resizeCanvas(canvas);
+  function init() {
+    canvasFunctions.resizeCanvas(canvas);
 
-  // Setup color breakpoints for triangles based on height
-  // const colorSectionSize = canvas.height / triangleColors.length;
-  // const colorBreakpoints = [];
-  // for (let i = 0; i < triangleColors.length; i++) {
-  //   colorBreakpoints.push(colorSectionSize * i);
-  // }
+    numCircles = {
+      x: Math.floor(canvas.width / 200),
+      y: Math.floor(canvas.height / 200),
+    };
 
-  createCircles();
+    circleSpeedRange = [0.2, 0.4];
+    circleRadius = Math.min(0.007 * canvas.width, 7);
+    circles = [];
+    idCounter = 0;
 
+    points = [];
+    delaunay = undefined;
+
+    createCircles();
+  }
+  init();
   requestAnimationFrame(render);
 
   function createCircles() {
+    circles = [];
     const dx = canvas.width / (numCircles.x + 1);
     const dy = canvas.height / (numCircles.y + 1);
-    // Create border of stationary points
+
+    // Create grid of circles
     const offset = 2;
-    for (let i = 0; i < numCircles.x + 2; i++) {
-      const posTop = { x: i * dx, y: -offset };
-      const posBottom = { x: i * dx, y: canvas.height + offset };
-      const circleTop = new Circle({
-        id: idCounter,
-        color: circleColor,
-        radius: circleRadius,
-        position: posTop,
-        staticObject: true,
-        visible: false,
-      });
-      idCounter++;
-      const circleBottom = new Circle({
-        id: idCounter,
-        color: circleColor,
-        radius: circleRadius,
-        position: posBottom,
-        staticObject: true,
-        visible: false,
-      });
-      idCounter++;
-
-      circles.push(circleTop);
-      circles.push(circleBottom);
-    }
-    for (let i = 1; i < numCircles.y; i++) {
-      const posLeft = { x: -offset, y: i * dy };
-      const posRight = { x: canvas.width + offset, y: i * dy };
-      const circleLeft = new Circle({
-        id: idCounter,
-        color: circleColor,
-        radius: circleRadius,
-        position: posLeft,
-        staticObject: true,
-        visible: false,
-      });
-      idCounter++;
-      const circleRight = new Circle({
-        id: idCounter,
-        color: circleColor,
-        radius: circleRadius,
-        position: posRight,
-        staticObject: true,
-        visible: false,
-      });
-      idCounter++;
-
-      circles.push(circleLeft);
-      circles.push(circleRight);
-    }
-    for (let i = 1; i < numCircles.y; i++) {
-      for (let j = 1; j <= numCircles.x; j++) {
+    for (let i = 0; i <= numCircles.y + 1; i++) {
+      for (let j = 0; j <= numCircles.x + 1; j++) {
+        //console.log(j);
         const pos = { x: j * dx, y: i * dy };
 
         const direction = [1, -1];
@@ -160,8 +121,8 @@ const main = (function () {
           radius: circleRadius,
           position: pos,
           velocity: { x: velocityX, y: velocityY },
-          staticObject: false,
-          visible: true,
+          staticObject: i === 0 || j === 0 ? true : false,
+          visible: i === 0 || j === 0 ? false : true,
         });
 
         idCounter++;
