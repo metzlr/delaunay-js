@@ -1,1 +1,1 @@
-# dcel-js
+# delaunay-js
