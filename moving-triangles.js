@@ -52,9 +52,11 @@ const main = (function () {
 
   window.onresize = () => {
     init();
+    update();
   };
 
   // Constants
+  const fps = 60;
   const circleColor = "#B5B0FB66";
   const drawEdges = false;
   const lineColor = "#B5B0FB66";
@@ -69,7 +71,8 @@ const main = (function () {
     circles,
     idCounter,
     points,
-    delaunay;
+    delaunay,
+    delaunayData;
 
   // Setup scene
   function init() {
@@ -80,7 +83,7 @@ const main = (function () {
       y: Math.floor(canvas.height / 200),
     };
 
-    circleSpeedRange = [0.2, 0.4];
+    circleSpeedRange = [0.6, 0.9];
     circleRadius = Math.min(0.007 * canvas.width, 7);
     circles = [];
     idCounter = 0;
@@ -90,8 +93,48 @@ const main = (function () {
 
     createCircles();
   }
+
   init();
+  // Initialize update loop. Locked to specific FPS
+  let circlesUpdated = false;
+  setInterval(update, 1000 / fps);
+
   requestAnimationFrame(render);
+
+  function update() {
+    points = [];
+    for (let i = 0; i < circles.length; i++) {
+      circles[i].update(canvas);
+      points.push(circles[i].position);
+    }
+    delaunay = new Delaunay(points, ctx);
+    circlesUpdated = true;
+  }
+
+  function draw() {
+    if (!circlesUpdated) return;
+    circlesUpdated = false;
+    // Clear canvas
+    ctx.fillStyle = "#f0f0f0";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    const delaunayData = delaunay.getTriangleData();
+    drawTriangles(
+      ctx,
+      delaunayData.vertices,
+      delaunayData.triangles,
+      drawEdges
+    );
+
+    for (let i = 0; i < circles.length; i++) {
+      circles[i].draw(ctx);
+    }
+  }
+
+  function render() {
+    draw();
+
+    requestAnimationFrame(render);
+  }
 
   function createCircles() {
     circles = [];
@@ -102,9 +145,7 @@ const main = (function () {
     const offset = 2;
     for (let i = 0; i <= numCircles.y + 1; i++) {
       for (let j = 0; j <= numCircles.x + 1; j++) {
-        //console.log(j);
         const pos = { x: j * dx, y: i * dy };
-
         const direction = [1, -1];
         const velocityX =
           (Math.random() * (circleSpeedRange[1] - circleSpeedRange[0]) +
@@ -114,15 +155,18 @@ const main = (function () {
           (Math.random() * (circleSpeedRange[1] - circleSpeedRange[0]) +
             circleSpeedRange[0]) *
           direction[Math.floor(Math.random() * 2)];
-
+        const edgeCircle =
+          i === 0 || j === 0 || j === numCircles.x + 1 || i === numCircles.y + 1
+            ? true
+            : false;
         const circle = new Circle({
           id: idCounter,
-          color: circleColor, //ballColors[Math.floor(Math.random() * ballColors.length)],
+          color: circleColor,
           radius: circleRadius,
           position: pos,
           velocity: { x: velocityX, y: velocityY },
-          staticObject: i === 0 || j === 0 ? true : false,
-          visible: i === 0 || j === 0 ? false : true,
+          staticObject: edgeCircle ? true : false,
+          visible: edgeCircle ? false : true,
         });
 
         idCounter++;
@@ -131,17 +175,9 @@ const main = (function () {
     }
   }
 
-  function drawLine(ctx, p1, p2) {
-    ctx.beginPath();
-    ctx.moveTo(p1.x, p1.y);
-    ctx.lineTo(p2.x, p2.y);
-    ctx.strokeStyle = lineColor;
-    ctx.lineWidth = lineWidth;
-    ctx.stroke();
-  }
-
   function drawTriangles(ctx, vertices, triangles, drawEdges) {
-    triangles.forEach((triangle) => {
+    for (let i = 0; i < triangles.length; i++) {
+      const triangle = triangles[i];
       const [v1, v2, v3] = [
         vertices[triangle[0]],
         vertices[triangle[1]],
@@ -156,15 +192,6 @@ const main = (function () {
         triangleBaseColor.l +
         (heightRatio * (triangleColorRangeL[1] - triangleColorRangeL[0]) +
           triangleColorRangeL[0]);
-      // let color = triangleColors[0];
-      // for (let i = 1; i < colorBreakpoints.length; i++) {
-      //   if (midpoint.y >= colorBreakpoints[i]) {
-      //     color = triangleColors[i];
-      //   } else {
-      //     break;
-      //   }
-      // }
-      //ctx.fillStyle = `hsl(${triangleBaseColor.h}, ${triangleBaseColor.s}%, ${lightness}%)`;
       ctx.fillStyle = `hsl(${triangleBaseColor.h},${triangleBaseColor.s}%,${lightness}%)`;
       ctx.fill();
 
@@ -173,7 +200,7 @@ const main = (function () {
 
       ctx.lineWidth = lineWidth;
       ctx.stroke();
-    });
+    }
   }
   function getTriangleMidpoint(vertices) {
     let min = { x: undefined, y: undefined };
@@ -194,42 +221,5 @@ const main = (function () {
       }
     }
     return { x: (max.x - min.x) / 2 + min.x, y: (max.y - min.y) / 2 + min.y };
-  }
-
-  function update() {
-    points = [];
-    circles.forEach((item) => {
-      item.update(canvas);
-      points.push(item.position);
-    });
-
-    delaunay = new Delaunay(points, ctx);
-  }
-
-  function draw() {
-    const delaunayData = delaunay.getTriangleData();
-    drawTriangles(
-      ctx,
-      delaunayData.vertices,
-      delaunayData.triangles,
-      drawEdges
-    );
-
-    circles.forEach((item, index) => {
-      item.draw(ctx);
-    });
-  }
-
-  function render() {
-    // Resize canvas
-    //canvasFunctions.resizeCanvas(canvas);
-    // Clear canvas
-    ctx.fillStyle = "#f0f0f0";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    update();
-    draw();
-
-    requestAnimationFrame(render);
   }
 })();
