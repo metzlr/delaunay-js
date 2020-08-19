@@ -52,16 +52,17 @@ const main = (function () {
 
   const numCircles = { x: 8, y: 8 };
 
-  const circleSpeedRange = [0.25, 0.5];
-  const circleRadius = 7;
+  const circleSpeedRange = [0.2, 0.4];
+  const circleRadius = 6;
   //const ballColors = ["#ff0000"];
-  const circleColor = "#fa6863";
+  const circleColor = "#B5B0FB66";
 
+  const drawEdges = false;
   const lineColor = "#ff0000";
-  const lineWidth = 2;
+  const lineWidth = 1;
 
   const triangleBaseColor = { h: 244, s: 94, l: 68 };
-  const triangleColorRangeL = [-5, 5];
+  const triangleColorRangeL = [-10, 5];
   //const triangleColors = ["#4f49bd", "#6c63fa", "#867ff4"];
 
   let circles = [];
@@ -178,7 +179,7 @@ const main = (function () {
     ctx.stroke();
   }
 
-  function drawTriangles(ctx, vertices, triangles) {
+  function drawTriangles(ctx, vertices, triangles, drawEdges) {
     triangles.forEach((triangle) => {
       const [v1, v2, v3] = [
         vertices[triangle[0]],
@@ -205,6 +206,12 @@ const main = (function () {
       //ctx.fillStyle = `hsl(${triangleBaseColor.h}, ${triangleBaseColor.s}%, ${lightness}%)`;
       ctx.fillStyle = `hsl(${triangleBaseColor.h},${triangleBaseColor.s}%,${lightness}%)`;
       ctx.fill();
+
+      ctx.strokeStyle = drawEdges ? circleColor : ctx.fillStyle;
+      ctx.lineTo(v1.x, v1.y);
+
+      ctx.lineWidth = lineWidth;
+      ctx.stroke();
     });
   }
   function getTriangleMidpoint(vertices) {
@@ -240,7 +247,12 @@ const main = (function () {
 
   function draw() {
     const delaunayData = delaunay.getTriangleData();
-    drawTriangles(ctx, delaunayData.vertices, delaunayData.triangles);
+    drawTriangles(
+      ctx,
+      delaunayData.vertices,
+      delaunayData.triangles,
+      drawEdges
+    );
 
     circles.forEach((item, index) => {
       item.draw(ctx);
