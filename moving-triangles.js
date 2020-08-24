@@ -50,19 +50,18 @@ const main = (function () {
   const canvas = document.getElementById("main-canvas");
   const ctx = canvas.getContext("2d");
 
-  window.onresize = () => {
-    init();
-    update();
-  };
+  resizeCanvas(canvas);
 
   // Constants
   const fps = 60;
-  const circleColor = "#B5B0FB66";
+  // const circleColor = "#B5B0FB66";
+  const circleColor = "#ededed";
   const drawEdges = false;
   const lineColor = "#B5B0FB66";
   const lineWidth = 1;
-  const triangleBaseColor = { h: 244, s: 94, l: 68 };
-  const triangleColorRangeL = [-10, 5];
+  //const triangleBaseColor = { h: 244, s: 94, l: 68 };
+  const triangleBaseColor = { h: 35, s: 100, l: 60 };
+  const triangleColorRangeL = [-20, 20];
 
   // Non-constants
   let numCircles,
@@ -75,16 +74,14 @@ const main = (function () {
     delaunayData;
 
   // Setup scene
-  function init() {
-    canvasFunctions.resizeCanvas(canvas);
-
+  function setupScene() {
     numCircles = {
       x: Math.floor(canvas.width / 200),
       y: Math.floor(canvas.height / 200),
     };
 
     circleSpeedRange = [0.6, 0.9];
-    circleRadius = Math.min(0.007 * canvas.width, 7);
+    circleRadius = Math.min(0.005 * canvas.height, 7);
     circles = [];
     idCounter = 0;
 
@@ -94,7 +91,7 @@ const main = (function () {
     createCircles();
   }
 
-  init();
+  setupScene();
   // Initialize update loop. Locked to specific FPS
   let circlesUpdated = false;
   setInterval(update, 1000 / fps);
@@ -102,6 +99,10 @@ const main = (function () {
   requestAnimationFrame(render);
 
   function update() {
+    const resized = resizeCanvas(canvas);
+    if (resized) {
+      setupScene();
+    }
     points = [];
     for (let i = 0; i < circles.length; i++) {
       circles[i].update(canvas);
@@ -113,6 +114,7 @@ const main = (function () {
 
   function draw() {
     if (!circlesUpdated) return;
+    if (delaunay === undefined) return;
     circlesUpdated = false;
     // Clear canvas
     ctx.fillStyle = "#f0f0f0";
@@ -134,6 +136,24 @@ const main = (function () {
     draw();
 
     requestAnimationFrame(render);
+  }
+
+  function resizeCanvas(canvas) {
+    var realToCSSPixels = window.devicePixelRatio;
+    // Lookup the size the browser is displaying the canvas in CSS pixels
+    // and compute a size needed to make our drawingbuffer match it in
+    // device pixels.
+    var displayWidth = Math.floor(canvas.clientWidth * realToCSSPixels);
+    var displayHeight = Math.floor(canvas.clientHeight * realToCSSPixels);
+
+    // Check if the canvas is not the same size.
+    if (canvas.width !== displayWidth || canvas.height !== displayHeight) {
+      // Make the canvas the same size
+      canvas.width = displayWidth;
+      canvas.height = displayHeight;
+      return true;
+    }
+    return false;
   }
 
   function createCircles() {

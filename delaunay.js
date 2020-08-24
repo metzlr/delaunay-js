@@ -423,7 +423,6 @@ class Delaunay {
       safety++;
       if (safety > 10000) {
         throw new Error("Infinite loop here");
-        break;
       }
     }
     return vertices;
