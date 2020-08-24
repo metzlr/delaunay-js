@@ -61,7 +61,7 @@ const main = (function () {
   const lineWidth = 1;
   //const triangleBaseColor = { h: 244, s: 94, l: 68 };
   const triangleBaseColor = { h: 35, s: 100, l: 60 };
-  const triangleColorRangeL = [-20, 20];
+  const triangleColorRangeL = [10, -35];
 
   // Non-constants
   let numCircles,
@@ -76,12 +76,12 @@ const main = (function () {
   // Setup scene
   function setupScene() {
     numCircles = {
-      x: Math.floor(canvas.width / 200),
-      y: Math.floor(canvas.height / 200),
+      x: Math.floor(canvas.width / 125),
+      y: Math.floor(canvas.height / 125),
     };
 
     circleSpeedRange = [0.6, 0.9];
-    circleRadius = Math.min(0.005 * canvas.height, 7);
+    circleRadius = Math.min(0.003 * canvas.height, 7);
     circles = [];
     idCounter = 0;
 
