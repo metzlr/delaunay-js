@@ -4,7 +4,7 @@
   "description": "",
   "main": "dcel.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "deploy": "gh-pages -d src -b gh-pages -m 'Deploying to Github Pages'"
   },
   "keywords": [],
   "author": "",
