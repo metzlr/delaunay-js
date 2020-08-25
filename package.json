@@ -1,8 +1,8 @@
 {
-  "name": "dcel-js",
+  "name": "delaunay-js",
   "version": "1.0.0",
   "description": "",
-  "main": "dcel.js",
+  "main": "delaunay.js",
   "scripts": {
     "deploy": "gh-pages -d src -b gh-pages -m 'Deploying to Github Pages'"
   },
