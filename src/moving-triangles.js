@@ -55,7 +55,7 @@ const main = (function () {
   // Constants
   const fps = 60;
   // const circleColor = "#B5B0FB66";
-  const circleColor = "#ededed";
+  const circleColor = "#edededbb";
   const drawEdges = false;
   const lineColor = "#B5B0FB66";
   const lineWidth = 1;
@@ -76,8 +76,8 @@ const main = (function () {
   // Setup scene
   function setupScene() {
     numCircles = {
-      x: Math.floor(canvas.width / 125),
-      y: Math.floor(canvas.height / 125),
+      x: Math.floor(canvas.clientWidth / 125),
+      y: Math.floor(canvas.clientHeight / 125),
     };
 
     circleSpeedRange = [0.6, 0.9];

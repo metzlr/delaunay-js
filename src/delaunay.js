@@ -123,7 +123,7 @@ class Delaunay {
     //   { x: Number.POSITIVE_INFINITY, y: Number.POSITIVE_INFINITY },
     //   { x: Number.NEGATIVE_INFINITY, y: Number.NEGATIVE_INFINITY },
     // ];
-    const FAR_AWAY = 10000;
+    const FAR_AWAY = 100000;
     const tempPositions = [
       { x: -FAR_AWAY, y: -FAR_AWAY },
       { x: 500, y: FAR_AWAY },
@@ -197,6 +197,7 @@ class Delaunay {
     for (let i = 0; i < this.points.length; i++) {
       const point = this.points[i];
       const triangle = this.containingTriangle(point);
+      if (triangle === undefined) break;
 
       /* Need case for when point lies on edge of triangle? */
 
@@ -382,6 +383,7 @@ class Delaunay {
       }
       if (!foundChild) {
         console.error("Uh oh. Triangle had children but none matched.", point);
+        return undefined;
       }
 
       safety++;
