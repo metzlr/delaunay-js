@@ -54,14 +54,14 @@ const main = (function () {
 
   // Constants
   const fps = 60;
-  // const circleColor = "#B5B0FB66";
   const circleColor = "#edededbb";
   const drawEdges = false;
   const lineColor = "#B5B0FB66";
   const lineWidth = 1;
-  //const triangleBaseColor = { h: 244, s: 94, l: 68 };
-  const triangleBaseColor = { h: 35, s: 100, l: 60 };
-  const triangleColorRangeL = [10, -35];
+  const triangleColorGradient = [
+    [0, 219, 222],
+    [252, 0, 255],
+  ];
 
   // Non-constants
   let numCircles,
@@ -162,7 +162,6 @@ const main = (function () {
     const dy = canvas.height / (numCircles.y + 1);
 
     // Create grid of circles
-    const offset = 2;
     for (let i = 0; i <= numCircles.y + 1; i++) {
       for (let j = 0; j <= numCircles.x + 1; j++) {
         const pos = { x: j * dx, y: i * dy };
@@ -195,6 +194,17 @@ const main = (function () {
     }
   }
 
+  function getGradientColor(color1, color2, ratio) {
+    var w1 = ratio;
+    var w2 = 1 - w1;
+    var rgb = [
+      Math.round(color1[0] * w1 + color2[0] * w2),
+      Math.round(color1[1] * w1 + color2[1] * w2),
+      Math.round(color1[2] * w1 + color2[2] * w2),
+    ];
+    return rgb;
+  }
+
   function drawTriangles(ctx, vertices, triangles, drawEdges) {
     for (let i = 0; i < triangles.length; i++) {
       const triangle = triangles[i];
@@ -208,11 +218,12 @@ const main = (function () {
       ctx.lineTo(v2.x, v2.y);
       ctx.lineTo(v3.x, v3.y);
       const heightRatio = getTriangleMidpoint([v1, v2, v3]).y / canvas.height;
-      const lightness =
-        triangleBaseColor.l +
-        (heightRatio * (triangleColorRangeL[1] - triangleColorRangeL[0]) +
-          triangleColorRangeL[0]);
-      ctx.fillStyle = `hsl(${triangleBaseColor.h},${triangleBaseColor.s}%,${lightness}%)`;
+      const color = getGradientColor(
+        triangleColorGradient[0],
+        triangleColorGradient[1],
+        heightRatio
+      );
+      ctx.fillStyle = `rgb(${color.join()})`;
       ctx.fill();
 
       ctx.strokeStyle = drawEdges ? circleColor : ctx.fillStyle;
