@@ -75,11 +75,11 @@ const main = (function () {
 
   // Setup scene
   function setupScene() {
+    // Spacing should not be larger on higher-res displays, so use client width and height
     numCircles = {
       x: Math.floor(canvas.clientWidth / 125),
       y: Math.floor(canvas.clientHeight / 125),
     };
-
     circleSpeedRange = [0.6, 0.9];
     circleRadius = Math.min(0.003 * canvas.height, 7);
     circles = [];
@@ -145,7 +145,6 @@ const main = (function () {
     // device pixels.
     var displayWidth = Math.floor(canvas.clientWidth * realToCSSPixels);
     var displayHeight = Math.floor(canvas.clientHeight * realToCSSPixels);
-
     // Check if the canvas is not the same size.
     if (canvas.width !== displayWidth || canvas.height !== displayHeight) {
       // Make the canvas the same size
