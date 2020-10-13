@@ -75,32 +75,28 @@ const main = (function () {
   const lineColor = "#B5B0FB66";
   const lineWidth = 1;
   const triangleColorGradient = [
-    [0, 219, 222],
-    [252, 0, 255],
+    [87, 75, 250],
+    [87, 250, 160],
+  ];
+
+  const numCircles = {
+    x: Math.floor(canvas.clientWidth / 150),
+    y: Math.floor(canvas.clientHeight / 150),
+  };
+  const circleCurveRateRange = [0.005, 0.02];
+  const circleSpeedRange = [0.5, 1];
+  const circleRadiusRange = [
+    Math.min(0.0025 * canvas.height, 7),
+    Math.min(0.0065 * canvas.height, 9),
   ];
 
   // Non-constants
-  let numCircles,
-    circleSpeedRange,
-    circleRadiusRange,
-    circles,
-    idCounter,
-    points,
-    delaunay;
+  let circles, idCounter, points, delaunay;
 
   // Setup scene
   function setupScene() {
     // Spacing should not be larger on higher-res displays, so use client width and height
-    numCircles = {
-      x: Math.floor(canvas.clientWidth / 150),
-      y: Math.floor(canvas.clientHeight / 150),
-    };
-    circleCurveRateRange = [0.005, 0.02];
-    circleSpeedRange = [0.5, 1];
-    circleRadiusRange = [
-      Math.min(0.0025 * canvas.height, 7),
-      Math.min(0.0065 * canvas.height, 9),
-    ];
+
     circles = [];
     idCounter = 0;
 
