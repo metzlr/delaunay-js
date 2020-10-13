@@ -11,13 +11,12 @@ class Circle {
   }) {
     this.id = id;
     this.color = color;
-    if (id === 15) this.color = "#00ff00";
     this.radius = radius;
     this.position = position;
     this.staticObject = staticObject;
     this.visible = visible;
 
-    this.angle = 0;
+    this.angle = Math.random() * Math.PI * 2;
     this.dAngle = (Math.random() > 0.5 ? 1 : -1) * curveRate;
     this.rotationDirection = {
       x: (Math.random() > 0.5 ? 1 : -1) * rotationSpeed,
