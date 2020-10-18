@@ -79,23 +79,30 @@ const main = (function () {
     [87, 250, 160],
   ];
 
-  const numCircles = {
-    x: Math.floor(canvas.clientWidth / 150),
-    y: Math.floor(canvas.clientHeight / 150),
-  };
-  const circleCurveRateRange = [0.005, 0.02];
-  const circleSpeedRange = [0.5, 1];
-  const circleRadiusRange = [
-    Math.min(0.0025 * canvas.height, 7),
-    Math.min(0.0065 * canvas.height, 9),
-  ];
-
   // Non-constants
-  let circles, idCounter, points, delaunay;
+  let numCircles,
+    circleCurveRateRange,
+    circleSpeedRange,
+    circleRadiusRange,
+    circles,
+    idCounter,
+    points,
+    delaunay;
 
   // Setup scene
   function setupScene() {
-    // Spacing should not be larger on higher-res displays, so use client width and height
+    // Spacing should not be larger on higher-res displays, so use client width and height to calculate number of circles. Other factors, however, should be scaled based on devicePixelRatio
+    const dpr = window.devicePixelRatio;
+    numCircles = {
+      x: Math.floor(canvas.clientWidth / 150),
+      y: Math.floor(canvas.clientHeight / 150),
+    };
+    circleCurveRateRange = [0.005, 0.02];
+    circleSpeedRange = [0.5 * dpr, 1 * dpr];
+    circleRadiusRange = [
+      Math.min(0.0025 * canvas.height, 7 * dpr),
+      Math.min(0.0065 * canvas.height, 9 * dpr),
+    ];
 
     circles = [];
     idCounter = 0;
