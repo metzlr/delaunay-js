@@ -1,6 +1,6 @@
 # delaunay-js
 
-A canvas visual that creates a Delaunay Triangulation for a random set of moving points.
+A canvas visual that creates a Delaunay Triangulation for a bunch of randomly moving points.
 
 #### [Live Demo](https://metzlr.github.io/delaunay-js)
 
